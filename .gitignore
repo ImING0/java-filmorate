@@ -44,7 +44,8 @@ build/
 
 *.db
 db/*
+
+mvnw.cmd
+mvnw
 .mvn/wrapper/maven-wrapper.jar
 .mvn/wrapper/maven-wrapper.properties
-mvnw
-mvnw.cmd
