@@ -2,12 +2,11 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exeption.FilmIsAlreadyExistException;
-import ru.yandex.practicum.filmorate.exeption.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exeption.ResourceIsAlreadyExistException;
+import ru.yandex.practicum.filmorate.exeption.ResourceNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.util.IdGenerator;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +20,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     public Film save(Film film) {
         if (filmMap.containsKey(film.getId())) {
             String massage = String.format("Фильм с id %d уже есть", film.getId());
-            throw new FilmIsAlreadyExistException(massage);
+            throw new ResourceIsAlreadyExistException(massage);
         }
         film.setId(idGenerator.generateId());
         filmMap.put(film.getId(), film);
@@ -32,7 +31,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     public Film update(Film film) {
         if (!filmMap.containsKey(film.getId())) {
             String massage = String.format("Фильм с id %d не найден", film.getId());
-            throw new FilmNotFoundException(massage);
+            throw new ResourceNotFoundException(massage);
         }
         filmMap.put(film.getId(), film);
         return film;

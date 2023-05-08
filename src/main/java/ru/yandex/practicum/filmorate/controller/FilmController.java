@@ -5,12 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exeption.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exeption.ResourceNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -23,18 +22,18 @@ public class FilmController {
 
     @PostMapping
     public ResponseEntity<Film> createFilm(@Valid @RequestBody Film film) {
-        log.info("Film created {}", film);
+        log.info("Фильм создан {}", film);
         Film created = inMemoryFilmStorage.save(film);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
-        log.info("Film updated {}", film);
+        log.info("Фильм обновлен {}", film);
         try {
             Film updated = inMemoryFilmStorage.update(film);
             return new ResponseEntity<>(updated, HttpStatus.OK);
-        } catch (FilmNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             log.info(e.getMessage());
         }
         return new ResponseEntity<>(film, HttpStatus.INTERNAL_SERVER_ERROR);
