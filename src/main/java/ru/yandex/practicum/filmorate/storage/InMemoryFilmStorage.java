@@ -2,21 +2,44 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exeption.FilmIsAlreadyExistException;
+import ru.yandex.practicum.filmorate.exeption.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.util.IdGenerator;
 
+import java.awt.*;
+import java.util.List;
 import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 public class InMemoryFilmStorage implements FilmStorage{
 
-    private final Map<Long, Film> filmMapMap;
+    private final Map<Long, Film> filmMap;
     private final IdGenerator idGenerator;
     @Override
     public Film save(Film film) {
+        if (filmMap.containsKey(film.getId())) {
+            String massage = String.format("Фильм с id %d уже есть", film.getId());
+            throw new FilmIsAlreadyExistException(massage);
+        }
         film.setId(idGenerator.generateId());
-        filmMapMap.put(film.getId(), film);
+        filmMap.put(film.getId(), film);
         return film;
+    }
+
+    @Override
+    public Film update(Film film) {
+        if (!filmMap.containsKey(film.getId())) {
+            String massage = String.format("Фильм с id %d не найден", film.getId());
+            throw new FilmNotFoundException(massage);
+        }
+        filmMap.put(film.getId(), film);
+        return film;
+    }
+
+    @Override
+    public List<Film> findAll() {
+        return List.copyOf(filmMap.values());
     }
 }
