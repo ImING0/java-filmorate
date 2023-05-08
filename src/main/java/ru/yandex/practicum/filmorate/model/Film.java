@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @Jacksonized
 public class Film {
 
-
     private Long id;
     @NotEmpty(message = "Название не может быть пустым")
     @NotBlank(message = "Название не может быть пустым")

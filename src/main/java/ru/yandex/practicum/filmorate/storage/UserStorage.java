@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserStorage {
 
-    User save (User user);
+    User save(User user);
 
     User update(User user);
 

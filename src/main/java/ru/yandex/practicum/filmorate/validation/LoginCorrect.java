@@ -11,6 +11,8 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LoginCorrect {
     String message() default "Логин не должен быть пустым или содержать пробелы!";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

@@ -14,7 +14,6 @@ import java.time.LocalDate;
 @Jacksonized
 public class User {
 
-
     private Long id;
     @Email
     private String email;
@@ -23,5 +22,4 @@ public class User {
     private String name;
     @Past
     private LocalDate birthday;
-
 }

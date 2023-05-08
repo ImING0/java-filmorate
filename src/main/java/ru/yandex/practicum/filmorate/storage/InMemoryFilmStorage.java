@@ -12,10 +12,11 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class InMemoryFilmStorage implements FilmStorage{
+public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Long, Film> filmMap;
     private final IdGenerator idGenerator;
+
     @Override
     public Film save(Film film) {
         if (filmMap.containsKey(film.getId())) {

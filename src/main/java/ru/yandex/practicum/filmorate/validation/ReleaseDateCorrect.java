@@ -10,7 +10,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ReleaseDateCorrect {
     String message() default "Дана не может быть раньше чем 28 декабря 1895";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
 
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 }
