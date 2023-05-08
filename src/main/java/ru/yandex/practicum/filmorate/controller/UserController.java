@@ -21,12 +21,13 @@ import java.util.List;
 public class UserController {
 
     private final InMemoryUserStorage inMemoryUserStorage;
+
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         log.info("Получен запрос на создание пользователя {}", user);
         try {
             User userCreated = inMemoryUserStorage.save(setNameAsLoginIfNameIsEmpty(user));
-            return new  ResponseEntity<>(user, HttpStatus.CREATED);
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
         } catch (ResourceIsAlreadyExistException e) {
             log.info(e.getMessage());
         }
@@ -42,7 +43,7 @@ public class UserController {
         } catch (ResourceNotFoundException e) {
             log.info(e.getMessage());
         }
-        return new  ResponseEntity<>(user, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(user, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping
