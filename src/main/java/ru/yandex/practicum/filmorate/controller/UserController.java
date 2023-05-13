@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exeption.ResourceIsAlreadyExistException;
 import ru.yandex.practicum.filmorate.exeption.ResourceNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.service.UserServiceInterface;
+import ru.yandex.practicum.filmorate.storage.inmemory.InMemoryUserStorage;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -20,13 +21,13 @@ import java.util.List;
 @Slf4j
 public class UserController {
 
-    private final InMemoryUserStorage inMemoryUserStorage;
+    private final UserServiceInterface userServiceInterface;
 
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         log.info("Получен запрос на создание пользователя {}", user);
         try {
-            User userCreated = inMemoryUserStorage.save(setNameAsLoginIfNameIsEmpty(user));
+            User userCreated = userServiceInterface.createUser(setNameAsLoginIfNameIsEmpty(user));
             return new ResponseEntity<>(user, HttpStatus.CREATED);
         } catch (ResourceIsAlreadyExistException e) {
             log.info(e.getMessage());
@@ -38,7 +39,7 @@ public class UserController {
     public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
         log.info("Получен запрос на обновления пользователя{}", user);
         try {
-            User userUpdated = inMemoryUserStorage.update(user);
+            User userUpdated = userServiceInterface.updateUser(user);
             return new ResponseEntity<>(userUpdated, HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             log.info(e.getMessage());
@@ -48,7 +49,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
-        return new ResponseEntity<>(inMemoryUserStorage.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(userServiceInterface.findAllUsers(), HttpStatus.OK);
     }
 
     private User setNameAsLoginIfNameIsEmpty(User user) {
