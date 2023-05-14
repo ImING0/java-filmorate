@@ -10,6 +10,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -17,7 +19,6 @@ import java.time.LocalDate;
 public class Film {
 
     private Long id;
-    @NotEmpty(message = "Название не может быть пустым")
     @NotBlank(message = "Название не может быть пустым")
     private String name;
     @Size(max = 200, message = "Превышено максимальное кол-во символов - 200")
@@ -26,4 +27,14 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Продолжительность не может быть отрицательной")
     private long duration;
+    @Builder.Default
+    private Set<Long> likes = new HashSet<>();
+
+    public void addLikeToFilm(User user) {
+        likes.add(user.getId());
+    }
+
+    public void removeLikeFromFilm(User user) {
+        likes.remove(user.getId());
+    }
 }
