@@ -52,10 +52,25 @@ public class UserController {
         return new ResponseEntity<>(userServiceInterface.findAllUsers(), HttpStatus.OK);
     }
 
+    /*Добавление в друзья*/
+    @PutMapping("/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void addFriend(@PathVariable("id") Long userId, @PathVariable("friendId") Long friendId) {
+        userServiceInterface.addFriend(userId, friendId);
+    }
+
+    /*Удаление из друзей*/
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void removeFriend(@PathVariable("id") Long userId, @PathVariable("friendId") Long friendId) {
+        userServiceInterface.removeFriend(userId, friendId);
+    }
+
     private User setNameAsLoginIfNameIsEmpty(User user) {
         if (ObjectUtils.isEmpty(user.getName())) {
             user.setName(user.getLogin());
         }
         return user;
     }
+
+
 }

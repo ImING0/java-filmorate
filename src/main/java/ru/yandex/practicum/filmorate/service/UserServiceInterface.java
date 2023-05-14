@@ -8,4 +8,7 @@ public interface UserServiceInterface {
     User createUser(User user);
     User updateUser(User user);
     List<User> findAllUsers();
+    void addFriend(Long userId, Long newFriendId);
+    void removeFriend(Long userId, Long friendId);
+    List<User> getCommonFriendForUser(Long userId, Long friendId);
 }

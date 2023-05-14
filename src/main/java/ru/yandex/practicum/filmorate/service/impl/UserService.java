@@ -28,4 +28,24 @@ public class UserService implements UserServiceInterface {
     public List<User> findAllUsers() {
         return userStorage.findAll();
     }
+
+    @Override
+    public void addFriend(Long userId, Long newFriendId) {
+        userStorage.addFriendForUser(userId, newFriendId);
+    }
+
+    @Override
+    public void removeFriend(Long userId, Long friendId) {
+        userStorage.removeFriendForUser(userId, friendId);
+    }
+
+    @Override
+    public List<User> getCommonFriendForUser(Long userId, Long friendId) {
+        return userStorage.getCommonFriendForUser(userId, friendId);
+    }
+
+    @Override
+    public List<User> getUserFriends(Long userId) {
+        return userStorage.getUserFriends(userId);
+    }
 }
