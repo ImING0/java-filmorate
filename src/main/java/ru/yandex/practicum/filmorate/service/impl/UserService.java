@@ -48,4 +48,9 @@ public class UserService implements UserServiceInterface {
     public List<User> getUserFriends(Long userId) {
         return userStorage.getUserFriends(userId);
     }
+
+    @Override
+    public User findUserById(Long userId) {
+        return userStorage.findUserById(userId);
+    }
 }

@@ -56,6 +56,7 @@ public class InMemoryUserStorage implements UserStorage {
         /*Если всё ок, то добавляем юзера в друзья*/
         User user = userMap.get(userId);
         User friend = userMap.get(newFriendId);
+        user.addFriend(friend);
     }
 
     @Override
@@ -107,5 +108,12 @@ public class InMemoryUserStorage implements UserStorage {
             }
         });
         return userFriends;
+    }
+
+    @Override
+    public User findUserById(Long userId) {
+        if (!userMap.containsKey(userId)) throw new ResourceNotFoundException(String.format(
+                "Пользователь с ID - %d не найден", userId));
+        return userMap.get(userId);
     }
 }
