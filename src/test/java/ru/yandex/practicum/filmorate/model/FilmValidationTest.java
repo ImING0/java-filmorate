@@ -1,8 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -14,7 +12,9 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/*
 @ExtendWith(MockitoExtension.class)
+*/
 public class FilmValidationTest {
 
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
@@ -34,7 +34,8 @@ public class FilmValidationTest {
 
         violations.forEach(violation -> {
             String message = violation.getMessage();
-            switch (violation.getPropertyPath().toString()) {
+            switch (violation.getPropertyPath()
+                    .toString()) {
                 case "name":
                     assertEquals("Название не может быть пустым", message);
                     break;
@@ -52,12 +53,14 @@ public class FilmValidationTest {
 
         film = Film.builder()
                 .name("The Godfather")
-                .description("The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.")
+                .description(
+                        "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.")
                 .releaseDate(LocalDate.of(1972, Month.MARCH, 24))
                 .duration(175L)
                 .build();
 
         violations = validator.validate(film);
-        assertEquals(0, violations.size(), "Ошибки валидации не должны возникать для корректного объекта");
+        assertEquals(0, violations.size(),
+                "Ошибки валидации не должны возникать для корректного объекта");
     }
 }

@@ -33,7 +33,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User update(User user) {
         if (!userMap.containsKey(user.getId())) {
-            String message = String.format("Пользователь с id %d не найден", user.getId());
+            String message = String.format("Пользователь с id [%d] не найден", user.getId());
             throw new ResourceNotFoundException(message);
         }
         userMap.put(user.getId(), user);
@@ -49,9 +49,9 @@ public class InMemoryUserStorage implements UserStorage {
     public void addFriendForUser(Long userId, Long newFriendId) {
         /*Проверяем есть ли юзер и его друг в памяти*/
         if (!userMap.containsKey(userId)) throw new ResourceNotFoundException(
-                String.format("Пользователь с таким ID - %d не найден.", userId));
+                String.format("Пользователь с таким ID - [%d] не найден.", userId));
         if (!userMap.containsKey(newFriendId)) throw new ResourceNotFoundException(String.format(
-                "Друг с таким ID - %d не найден", newFriendId));
+                "Друг с таким ID - [%d] не найден", newFriendId));
 
         /*Если всё ок, то добавляем юзера в друзья*/
         User user = userMap.get(userId);
@@ -63,9 +63,9 @@ public class InMemoryUserStorage implements UserStorage {
     public void removeFriendForUser(Long userId, Long friendId) {
         /*Проверяем есть ли юзер и его друг в памяти*/
         if (!userMap.containsKey(userId)) throw new ResourceNotFoundException(
-                String.format("Пользователь с таким ID - %d не найден.", userId));
+                String.format("Пользователь с таким ID - [%d] не найден.", userId));
         if (!userMap.containsKey(friendId)) throw new ResourceNotFoundException(String.format(
-                "Друг с таким ID - %d не найден", friendId));
+                "Друг с таким ID - [%d] не найден", friendId));
         User user = userMap.get(userId);
         User friend = userMap.get(friendId);
         user.removeFriend(friend);
@@ -75,9 +75,9 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> getCommonFriendForUser(Long userId, Long friendId) {
         /*Проверяем есть ли юзер и его друг в памяти*/
         if (!userMap.containsKey(userId)) throw new ResourceNotFoundException(
-                String.format("Пользователь с таким ID - %d не найден.", userId));
+                String.format("Пользователь с таким [ID] - %d не найден.", userId));
         if (!userMap.containsKey(friendId)) throw new ResourceNotFoundException(String.format(
-                "Друг с таким ID - %d не найден", friendId));
+                "Друг с таким [ID] - %d не найден", friendId));
         User user = userMap.get(userId);
         User friend = userMap.get(friendId);
         Set<Long> commonFriendsIds = user.findCommonFriendsWithUser(friend);
@@ -97,7 +97,7 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> getUserFriends(Long userId) {
         /*Проверяем есть ли такой юзер*/
         if (!userMap.containsKey(userId)) throw new ResourceNotFoundException(
-                String.format("Пользователь с таким ID - %d не найден.", userId));
+                String.format("Пользователь с таким ID - [%d] не найден.", userId));
         User user = userMap.get(userId);
         Set<Long> friendsIds = user.getFriends();
         List<User> userFriends = new ArrayList<>();
@@ -113,7 +113,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User findUserById(Long userId) {
         if (!userMap.containsKey(userId)) throw new ResourceNotFoundException(String.format(
-                "Пользователь с ID - %d не найден", userId));
+                "Пользователь с ID - [%d] не найден", userId));
         return userMap.get(userId);
     }
 }

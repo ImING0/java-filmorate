@@ -27,4 +27,24 @@ public class FilmService implements FilmServiceInterface {
     public List<Film> findAllFilms() {
         return filmStorage.findAll();
     }
+
+    @Override
+    public void addLikeToFilm(Long filmId, Long userId) {
+        filmStorage.addLikeToFilm(filmId, userId);
+    }
+
+    @Override
+    public void removeLikeFromFilm(Long filmId, Long userId) {
+        filmStorage.removeLikeFromFilm(filmId, userId);
+    }
+
+    @Override
+    public List<Film> getMostPopularFilms(Long count) {
+        return filmStorage.getMostPopularFilms(count);
+    }
+
+    @Override
+    public Film findFilmById(Long filmId) {
+        return filmStorage.findFilmById(filmId);
+    }
 }
