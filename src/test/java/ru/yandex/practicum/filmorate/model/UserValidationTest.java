@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -26,7 +25,8 @@ public class UserValidationTest {
                 .birthday(LocalDate.of(2000, 1, 1))
                 .build();
 
-        assertTrue(validator.validate(user).isEmpty(), "User should be valid");
+        assertTrue(validator.validate(user)
+                .isEmpty(), "User should be valid");
     }
 
     @Test
@@ -39,7 +39,8 @@ public class UserValidationTest {
                 .birthday(LocalDate.of(2000, 1, 1))
                 .build();
 
-        assertFalse(validator.validate(user).isEmpty(), "User should have invalid email");
+        assertFalse(validator.validate(user)
+                .isEmpty(), "User should have invalid email");
     }
 
     @Test
@@ -52,7 +53,8 @@ public class UserValidationTest {
                 .birthday(LocalDate.of(2000, 1, 1))
                 .build();
 
-        assertFalse(validator.validate(user).isEmpty(), "User should have invalid login");
+        assertFalse(validator.validate(user)
+                .isEmpty(), "User should have invalid login");
     }
 
     @Test
@@ -62,9 +64,11 @@ public class UserValidationTest {
                 .email("test@example.com")
                 .login("valid_login")
                 .name("John")
-                .birthday(LocalDate.now().plusDays(1))
+                .birthday(LocalDate.now()
+                        .plusDays(1))
                 .build();
 
-        assertFalse(validator.validate(user).isEmpty(), "User should have invalid birthday");
+        assertFalse(validator.validate(user)
+                .isEmpty(), "User should have invalid birthday");
     }
 }

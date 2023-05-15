@@ -29,12 +29,14 @@ public class User {
 
     public void addFriend(User user) {
         friends.add(user.getId());
-        user.getFriends().add(this.id);
+        user.getFriends()
+                .add(this.id);
     }
 
     public void removeFriend(User user) {
         friends.remove(user.getId());
-        user.getFriends().remove(this.id);
+        user.getFriends()
+                .remove(this.id);
     }
 
     public Set<Long> findCommonFriendsWithUser(User user) {

@@ -10,7 +10,8 @@ public class ReleaseDateValidator implements ConstraintValidator<ReleaseDateCorr
     private static final LocalDate DATE = LocalDate.of(1895, Month.DECEMBER, 28);
 
     @Override
-    public boolean isValid(LocalDate localDate, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(LocalDate localDate,
+            ConstraintValidatorContext constraintValidatorContext) {
         return localDate.isAfter(DATE);
     }
 }

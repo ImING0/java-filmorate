@@ -5,11 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exeption.ResourceNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmServiceInterface;
 import ru.yandex.practicum.filmorate.service.UserServiceInterface;
-import ru.yandex.practicum.filmorate.storage.inmemory.InMemoryFilmStorage;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -56,12 +54,11 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public ResponseEntity<List<Film>> getMostPopularFilms(@RequestParam(name = "count", defaultValue
-            = "10") Long count) {
+    public ResponseEntity<List<Film>> getMostPopularFilms(
+            @RequestParam(name = "count", defaultValue = "10") Long count) {
         List<Film> films = filmService.getMostPopularFilms(count);
         return new ResponseEntity<>(films, HttpStatus.OK);
     }
-
 
     @GetMapping
     public ResponseEntity<List<Film>> getAllFilms() {

@@ -61,6 +61,7 @@ public class DefExceptionHandler {
         return ErrorResponse.builder()
                 .message(ex.getMessage())
                 .code(HttpStatus.BAD_REQUEST.value())
-                .fieldErrors(errors).build();
+                .fieldErrors(errors)
+                .build();
     }
 }
