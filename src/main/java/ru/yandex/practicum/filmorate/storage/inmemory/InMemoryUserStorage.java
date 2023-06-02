@@ -8,21 +8,19 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.util.IdGenerator;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
 public class InMemoryUserStorage implements UserStorage {
 
+    private final Map<Long, User> userMap;
+    private final IdGenerator idGenerator;
+
     public Map<Long, User> getUserMap() {
         return userMap;
     }
-
-    private final Map<Long, User> userMap;
-    private final IdGenerator idGenerator;
 
     @Override
     public User save(User user) {
@@ -48,7 +46,6 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> findAll() {
         return List.copyOf(userMap.values());
     }
-
 
     @Override
     public User findUserById(Long userId) {

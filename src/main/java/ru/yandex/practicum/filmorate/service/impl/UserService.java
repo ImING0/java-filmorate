@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserServiceInterface;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.storage.inmemory.InMemoryUserStorage;
 
 import java.util.ArrayList;
@@ -71,7 +70,8 @@ public class UserService implements UserServiceInterface {
         Set<Long> friendsIds = user.getFriends();
         List<User> userFriends = new ArrayList<>();
         friendsIds.forEach(id -> {
-            User friend = userStorage.getUserMap().get(id);
+            User friend = userStorage.getUserMap()
+                    .get(id);
             if (friend != null) {
                 userFriends.add(friend);
             }

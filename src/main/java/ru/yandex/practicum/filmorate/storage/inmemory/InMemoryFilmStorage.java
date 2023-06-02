@@ -8,10 +8,8 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.util.IdGenerator;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -19,6 +17,10 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Long, Film> filmMap;
     private final IdGenerator idGenerator;
+
+    public Map<Long, Film> getFilmMap() {
+        return filmMap;
+    }
 
     @Override
     public Film save(Film film) {
@@ -44,32 +46,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public List<Film> findAll() {
         return List.copyOf(filmMap.values());
-    }
-
-    @Override
-    public void addLikeToFilm(Long filmId, Long userId) {
-        if (!filmMap.containsKey(filmId))
-            throw new ResourceNotFoundException("Фильм с id [%d] не найден");
-        filmMap.get(filmId)
-                .addLikeToFilm(userId);
-    }
-
-    @Override
-    public void removeLikeFromFilm(Long filmId, Long userId) {
-        if (!filmMap.containsKey(filmId))
-            throw new ResourceNotFoundException("Фильм с id [%d] не найден");
-        filmMap.get(filmId)
-                .removeLikeFromFilm(userId);
-    }
-
-    @Override
-    public List<Film> getMostPopularFilms(Long count) {
-        return filmMap.values()
-                .stream()
-                .sorted(Comparator.comparingInt(film -> -film.getLikes()
-                        .size()))
-                .limit(count)
-                .collect(Collectors.toList());
     }
 
     @Override
