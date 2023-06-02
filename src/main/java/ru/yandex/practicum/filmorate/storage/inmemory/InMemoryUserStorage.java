@@ -17,6 +17,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class InMemoryUserStorage implements UserStorage {
 
+    public Map<Long, User> getUserMap() {
+        return userMap;
+    }
+
     private final Map<Long, User> userMap;
     private final IdGenerator idGenerator;
 
@@ -45,75 +49,27 @@ public class InMemoryUserStorage implements UserStorage {
         return List.copyOf(userMap.values());
     }
 
-    @Override
-    public void addFriendForUser(Long userId, Long newFriendId) {
-        /*Проверяем есть ли юзер и его друг в памяти*/
-        if (!userMap.containsKey(userId)) throw new ResourceNotFoundException(
-                String.format("Пользователь с таким ID - [%d] не найден.", userId));
-        if (!userMap.containsKey(newFriendId)) throw new ResourceNotFoundException(
-                String.format("Друг с таким ID - [%d] не найден", newFriendId));
-
-        /*Если всё ок, то добавляем юзера в друзья*/
-        User user = userMap.get(userId);
-        User friend = userMap.get(newFriendId);
-        user.addFriend(friend);
-    }
-
-    @Override
-    public void removeFriendForUser(Long userId, Long friendId) {
-        /*Проверяем есть ли юзер и его друг в памяти*/
-        if (!userMap.containsKey(userId)) throw new ResourceNotFoundException(
-                String.format("Пользователь с таким ID - [%d] не найден.", userId));
-        if (!userMap.containsKey(friendId)) throw new ResourceNotFoundException(
-                String.format("Друг с таким ID - [%d] не найден", friendId));
-        User user = userMap.get(userId);
-        User friend = userMap.get(friendId);
-        user.removeFriend(friend);
-    }
-
-    @Override
-    public List<User> getCommonFriendForUser(Long userId, Long friendId) {
-        /*Проверяем есть ли юзер и его друг в памяти*/
-        if (!userMap.containsKey(userId)) throw new ResourceNotFoundException(
-                String.format("Пользователь с таким [ID] - %d не найден.", userId));
-        if (!userMap.containsKey(friendId)) throw new ResourceNotFoundException(
-                String.format("Друг с таким [ID] - %d не найден", friendId));
-        User user = userMap.get(userId);
-        User friend = userMap.get(friendId);
-        Set<Long> commonFriendsIds = user.findCommonFriendsWithUser(friend);
-
-        /*Собираем список общих друзей*/
-        List<User> commonFriends = new ArrayList<>();
-        for (Long id : commonFriendsIds) {
-            User someFriend = userMap.get(id);
-            if (someFriend != null) {
-                commonFriends.add(someFriend);
-            }
-        }
-        return commonFriends;
-    }
-
-    @Override
-    public List<User> getUserFriends(Long userId) {
-        /*Проверяем есть ли такой юзер*/
-        if (!userMap.containsKey(userId)) throw new ResourceNotFoundException(
-                String.format("Пользователь с таким ID - [%d] не найден.", userId));
-        User user = userMap.get(userId);
-        Set<Long> friendsIds = user.getFriends();
-        List<User> userFriends = new ArrayList<>();
-        friendsIds.forEach(id -> {
-            User friend = userMap.get(id);
-            if (friend != null) {
-                userFriends.add(friend);
-            }
-        });
-        return userFriends;
-    }
 
     @Override
     public User findUserById(Long userId) {
-        if (!userMap.containsKey(userId)) throw new ResourceNotFoundException(
-                String.format("Пользователь с ID - [%d] не найден", userId));
-        return userMap.get(userId);
+        return findUserOrThrow(userId);
+    }
+
+    public User findUserOrThrow(Long userId) {
+        if (!userMap.containsKey(userId)) {
+            throw new ResourceNotFoundException(
+                    String.format("Пользователь с таким ID - [%d] не найден.", userId));
+        } else {
+            return userMap.get(userId);
+        }
+    }
+
+    public User findFriendOrThrow(Long friendId) {
+        if (!userMap.containsKey(friendId)) {
+            throw new ResourceNotFoundException(
+                    String.format("Друг с таким [ID] - %d не найден", friendId));
+        } else {
+            return userMap.get(friendId);
+        }
     }
 }

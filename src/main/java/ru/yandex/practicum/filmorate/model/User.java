@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.jackson.Jacksonized;
 import ru.yandex.practicum.filmorate.validation.LoginCorrect;
 
@@ -14,6 +15,7 @@ import java.util.Set;
 @Data
 @Builder
 @Jacksonized
+
 public class User {
 
     private Long id;
