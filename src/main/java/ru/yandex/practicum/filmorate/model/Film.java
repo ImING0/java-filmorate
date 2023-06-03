@@ -6,10 +6,11 @@ import lombok.extern.jackson.Jacksonized;
 import ru.yandex.practicum.filmorate.validation.ReleaseDateCorrect;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -17,7 +18,6 @@ import java.time.LocalDate;
 public class Film {
 
     private Long id;
-    @NotEmpty(message = "Название не может быть пустым")
     @NotBlank(message = "Название не может быть пустым")
     private String name;
     @Size(max = 200, message = "Превышено максимальное кол-во символов - 200")
@@ -26,4 +26,14 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Продолжительность не может быть отрицательной")
     private long duration;
+    @Builder.Default
+    private Set<Long> likes = new HashSet<>();
+
+    public void addLikeToFilm(Long userId) {
+        likes.add(userId);
+    }
+
+    public void removeLikeFromFilm(Long userId) {
+        likes.remove(userId);
+    }
 }

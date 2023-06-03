@@ -1,10 +1,11 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.inmemory;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeption.ResourceIsAlreadyExistException;
 import ru.yandex.practicum.filmorate.exeption.ResourceNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.util.IdGenerator;
 
 import java.util.List;
@@ -17,10 +18,14 @@ public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> filmMap;
     private final IdGenerator idGenerator;
 
+    public Map<Long, Film> getFilmMap() {
+        return filmMap;
+    }
+
     @Override
     public Film save(Film film) {
         if (filmMap.containsKey(film.getId())) {
-            String massage = String.format("Фильм с id %d уже есть", film.getId());
+            String massage = String.format("Фильм с id [%d] уже есть", film.getId());
             throw new ResourceIsAlreadyExistException(massage);
         }
         film.setId(idGenerator.generateId());
@@ -31,7 +36,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film update(Film film) {
         if (!filmMap.containsKey(film.getId())) {
-            String massage = String.format("Фильм с id %d не найден", film.getId());
+            String massage = String.format("Фильм с id [%d] не найден", film.getId());
             throw new ResourceNotFoundException(massage);
         }
         filmMap.put(film.getId(), film);
@@ -41,5 +46,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public List<Film> findAll() {
         return List.copyOf(filmMap.values());
+    }
+
+    @Override
+    public Film findFilmById(Long filmId) {
+        if (!filmMap.containsKey(filmId))
+            throw new ResourceNotFoundException("Фильм с id [%d] не найден");
+        return filmMap.get(filmId);
     }
 }
