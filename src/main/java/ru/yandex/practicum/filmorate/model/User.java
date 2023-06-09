@@ -28,6 +28,7 @@ public class User {
     @Builder.Default
     private Set<Long> friends = new HashSet<>();
 
+
     public void addFriend(User user) {
         friends.add(user.getId());
         user.getFriends()

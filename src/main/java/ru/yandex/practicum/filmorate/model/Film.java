@@ -27,7 +27,10 @@ public class Film {
     @Positive(message = "Продолжительность не может быть отрицательной")
     private long duration;
     @Builder.Default
+    /*Поле хранит id пользователей, которым понравился фильм*/
     private Set<Long> likes = new HashSet<>();
+
+    //TODO добавить жанр
 
     public void addLikeToFilm(Long userId) {
         likes.add(userId);
