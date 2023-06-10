@@ -28,6 +28,7 @@ public class Film {
     private long duration;
     @Builder.Default
     private Set<Long> likes = new HashSet<>();
+    //TODO добавить жанр и рейтинг
 
     public void addLikeToFilm(Long userId) {
         likes.add(userId);

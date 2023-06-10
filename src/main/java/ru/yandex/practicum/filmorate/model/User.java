@@ -32,6 +32,7 @@ public class User {
         friends.add(user.getId());
         user.getFriends()
                 .add(this.id);
+        // TODO убрать добавление друга
     }
 
     public void removeFriend(User user) {
