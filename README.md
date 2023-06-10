@@ -2,7 +2,7 @@
 Template repository for Filmorate project.
 
 ### Схема, описывающая архитектуру базы данных приложения
-![Схема, описывающая архитектуру базы данных приложения](https://github.com/ImING0/java-filmorate/blob/add-genre-friends/pictures/DBd2.png)
+![Схема, описывающая архитектуру базы данных приложения](https://github.com/ImING0/java-filmorate/blob/main/pics/DBd2.png)
 
 
 ### Films
