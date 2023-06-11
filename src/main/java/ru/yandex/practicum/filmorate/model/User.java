@@ -30,9 +30,6 @@ public class User {
 
     public void addFriend(User user) {
         friends.add(user.getId());
-        user.getFriends()
-                .add(this.id);
-        // TODO убрать добавление друга
     }
 
     public void removeFriend(User user) {
