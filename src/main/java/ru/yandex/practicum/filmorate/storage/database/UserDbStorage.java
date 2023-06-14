@@ -3,19 +3,22 @@ package ru.yandex.practicum.filmorate.storage.database;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exeption.ResourceNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.storage.database.dbutils.CNGetter;
+import ru.yandex.practicum.filmorate.storage.database.dbutils.FriendAsTable;
 import ru.yandex.practicum.filmorate.storage.database.dbutils.SqlProvider;
+import ru.yandex.practicum.filmorate.storage.database.dbutils.UserAsTable;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -31,7 +34,7 @@ public class UserDbStorage implements UserStorage {
         return saveUserInDbInternal(user);
     }
 
-    private User saveUserInDbInternal (User user) {
+    private User saveUserInDbInternal(User user) {
         String sql = sqlProvider.insertUserInDbSql();
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
@@ -49,16 +52,15 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User user) {
-        return null;
+        throwIfUserNotExistInDb(user.getId());
+        updateUserInDbInternal(user);
+        return findUserById(user.getId());
     }
 
-    private void updateUserInDbInternal (User user) {
+    private void updateUserInDbInternal(User user) {
         /*Метод принимает объект класса User, и обновляет все его поля в базе данных.*/
-        jdbcTemplate.update(sqlProvider.updateUserInBdSql(), user.getEmail(),
-                user.getLogin(),
-                user.getName(),
-                user.getBirthday(),
-                user.getId());
+        jdbcTemplate.update(sqlProvider.updateUserInDbSql(), user.getEmail(), user.getLogin(),
+                user.getName(), user.getBirthday(), user.getId());
     }
 
     @Override
@@ -89,11 +91,65 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User findUserById(Long userId) {
 
-        String sql = sqlProvider.findUserByIdInBdSql();
-
+        String sql = sqlProvider.findUserByIdInDbSql();
+        User user = jdbcTemplate.query(sql, rs -> {
+            User userResult = null;
+            while (rs.next()) {
+                User friend = getFriendFromSqlResultSet(rs, cnGetter.getFriendColumns());
+                if (userResult == null) {
+                    userResult = getUserFromSqlResultSet(rs, cnGetter.getUserColumns(), userId);
+                }
+                if (friend != null) {
+                    userResult.addFriend(friend);
+                }
+            }
+            return userResult;
+        }, userId);
+        return user;
     }
 
-    private User getUSerFromSqlResultSet() {
+    private User getUserFromSqlResultSet(ResultSet resultSet, UserAsTable userColumn,
+            Long userId) throws SQLException {
+        String email = resultSet.getString(userColumn.getEmail());
+        String login = resultSet.getString(userColumn.getLogin());
+        String name = resultSet.getString(userColumn.getName());
+        LocalDate birthday = LocalDate.parse(resultSet.getString(userColumn.getBirthday()));
+        return User.builder()
+                .email(email)
+                .login(login)
+                .name(name)
+                .birthday(birthday)
+                .id(userId)
+                .build();
+    }
 
+    private User getFriendFromSqlResultSet(ResultSet resultSet, FriendAsTable friendColumn) throws
+            SQLException {
+        User friend = null;
+        Long friendId = resultSet.getLong(friendColumn.getId());
+        if (friendId == 0L) {
+            return friend;
+        }
+        String email = resultSet.getString(friendColumn.getEmail());
+        String login = resultSet.getString(friendColumn.getLogin());
+        String name = resultSet.getString(friendColumn.getName());
+        LocalDate birthday = LocalDate.parse(resultSet.getString(friendColumn.getBirthday()));
+        friend = User.builder()
+                .email(email)
+                .login(login)
+                .name(name)
+                .birthday(birthday)
+                .build();
+        return friend;
+    }
+
+
+    private void throwIfUserNotExistInDb(Long userId) {
+        String sql = sqlProvider.isUserExistInDb();
+        Integer answer = jdbcTemplate.queryForObject(sql, Integer.class, userId);
+        if (answer == 0) {
+            throw new ResourceNotFoundException(
+                    String.format("Пользователь с таким [ID] - %d не найден.", userId));
+        }
     }
 }

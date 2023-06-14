@@ -37,13 +37,8 @@ public class UserController {
     @PutMapping
     public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
         log.info("Получен запрос на обновления пользователя{}", user);
-        try {
-            User userUpdated = userServiceInterface.updateUser(user);
-            return new ResponseEntity<>(userUpdated, HttpStatus.OK);
-        } catch (ResourceNotFoundException e) {
-            log.info(e.getMessage());
-        }
-        return new ResponseEntity<>(user, HttpStatus.INTERNAL_SERVER_ERROR);
+        User userUpdated = userServiceInterface.updateUser(user);
+        return new ResponseEntity<>(userUpdated, HttpStatus.OK);
     }
 
     @GetMapping

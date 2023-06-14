@@ -10,27 +10,35 @@ public class SqlProvider {
                 + "VALUES (?, ?, ?, ?)";
     }
 
-    public String updateUserInBdSql() {
-        return "UPDATE USERS SET EMAIL = ?, LOGIN = ?, NAME = ?."
+    public String updateUserInDbSql() {
+        return "UPDATE USERS SET EMAIL = ?, LOGIN = ?, NAME = ?,"
                 + "BIRTHDAY = ?"
                 + "WHERE ID = ?";
     }
 
-    public String findUserByIdInBdSql () {
+    public String findUserByIdInDbSql() {
         /*SQL запрос должен вернуть самого юзера, а также список его друзей для последующей
         * обработки и воссоздания юзера в коде.*/
-        return "SELECT user.email AS user_email, " +
-                "user.login AS user_login, " +
-                "user.name AS user_name, " +
-                "user.birthday AS user_birthday, " +
-                "uf.id AS friend_id, " +
-                "uf.email AS friend_email, " +
-                "uf.login AS friend_login, " +
-                "uf.name AS friend_name, " +
-                "uf.birthday AS friend_birthday " +
-                "FROM USERS AS user" +
-                "LEFT JOIN FRIENDSHIP_STATUS fs ON user.id = fs.user_id " +
-                "LEFT JOIN Users uf ON uf.id = fs.friend_id " +
-                "WHERE user.id = ?";
+        return "SELECT u.EMAIL u_email,"
+                + "u.LOGIN u_login,"
+                + "u.NAME u_name,"
+                + "u.BIRTHDAY u_birthday, "
+                + "uf.ID f_id,"
+                + "uf.EMAIL f_email,"
+                + "uf.LOGIN f_login,"
+                + "uf.NAME f_name,"
+                + "uf.BIRTHDAY f_birthday "
+                + "FROM USERS AS u "
+                + "LEFT JOIN FRIENDSHIP_STATUS fs ON u.ID = FS.USER_ID "
+                + "LEFT JOIN USERS uf ON uf.ID = fs.FRIEND_ID "
+                + "WHERE u.ID = ?;";
+    }
+
+    /*Проверяет, есть ли пользователь в БД с указанным id. Если пользователь не найден, то вернет
+     0*/
+    public String isUserExistInDb() {
+        return "SELECT COUNT(*) "
+                + "FROM USERS "
+                + "WHERE USERS.ID = ?";
     }
 }
