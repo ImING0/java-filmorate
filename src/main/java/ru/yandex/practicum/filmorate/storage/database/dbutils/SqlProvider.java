@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.database.dbutils;
 import org.springframework.stereotype.Component;
 
 @Component
+@SuppressWarnings(value = "style")
 public class SqlProvider {
 
     public String insertUserInDbSql() {
@@ -36,9 +37,22 @@ public class SqlProvider {
 
     /*Проверяет, есть ли пользователь в БД с указанным id. Если пользователь не найден, то вернет
      0*/
-    public String isUserExistInDb() {
+    public String isUserExistInDbSql() {
         return "SELECT COUNT(*) "
                 + "FROM USERS "
                 + "WHERE USERS.ID = ?";
+    }
+
+    /*Добавляет друга в БД*/
+    public String addFriendForUserInDbSql() {
+        return "INSERT INTO FRIENDSHIP_STATUS (USER_ID, FRIEND_ID) " +
+                "VALUES (?,?);";
+    }
+
+    /*Удаляет пользователя из друзей*/
+
+    public String deleteFriendForUserInDbSql() {
+        return "DELETE FROM FRIENDSHIP_STATUS "
+                + "WHERE USER_ID = ? AND FRIEND_ID = ?;";
     }
 }

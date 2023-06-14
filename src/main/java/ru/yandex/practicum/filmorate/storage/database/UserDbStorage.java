@@ -65,17 +65,24 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> findAll() {
+       /* String sql = sqlProvider.f*/
         return null;
     }
 
     @Override
     public void addFriendForUser(Long userId, Long newFriendId) {
-
+        throwIfUserNotExistInDb(userId);
+        throwIfUserNotExistInDb(newFriendId);
+        String sql = sqlProvider.addFriendForUserInDbSql();
+        jdbcTemplate.update(sql, userId, newFriendId);
     }
 
     @Override
     public void removeFriendForUser(Long userId, Long friendId) {
-
+        throwIfUserNotExistInDb(userId);
+        throwIfUserNotExistInDb(friendId);
+        String sql = sqlProvider.deleteFriendForUserInDbSql();
+        jdbcTemplate.update(sql, userId, friendId);
     }
 
     @Override
@@ -90,7 +97,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User findUserById(Long userId) {
-
+        throwIfUserNotExistInDb(userId);
         String sql = sqlProvider.findUserByIdInDbSql();
         User user = jdbcTemplate.query(sql, rs -> {
             User userResult = null;
@@ -145,7 +152,7 @@ public class UserDbStorage implements UserStorage {
 
 
     private void throwIfUserNotExistInDb(Long userId) {
-        String sql = sqlProvider.isUserExistInDb();
+        String sql = sqlProvider.isUserExistInDbSql();
         Integer answer = jdbcTemplate.queryForObject(sql, Integer.class, userId);
         if (answer == 0) {
             throw new ResourceNotFoundException(
