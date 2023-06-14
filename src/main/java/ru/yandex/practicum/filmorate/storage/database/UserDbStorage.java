@@ -18,7 +18,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -65,8 +68,21 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> findAll() {
-       /* String sql = sqlProvider.f*/
-        return null;
+        /*Переиспользуем метод поиска по id, получим id всех юзеров и пройдемся циклом,
+         * вызывая для каждого метод получения по id*/
+        List<User> users = new ArrayList<>();
+        String allUserIdsSql = sqlProvider.findAllUsersInDbSql();
+        List<Long> userIds = jdbcTemplate.queryForList(allUserIdsSql, Long.class);
+        /*Пробежимся по полученным id, если пусто, то вернём пустой список.*/
+        if (userIds.isEmpty()) {
+            return users;
+        } else {
+            userIds.forEach(id -> {
+                User user = findUserById(id);
+                users.add(user);
+            });
+        }
+        return users;
     }
 
     @Override
@@ -87,12 +103,129 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getCommonFriendForUser(Long userId, Long friendId) {
-        return null;
+        throwIfUserNotExistInDb(userId);
+        throwIfUserNotExistInDb(friendId);
+        UserAsTable userColumn = cnGetter.getUserColumns();
+        FriendAsTable friendColumn = cnGetter.getFriendColumns();
+        String sql = sqlProvider.getCommonFriendsForUserFromDbSql();
+        List<User> usersFriends = jdbcTemplate.query(sql, rs -> {
+            Map<Long, User> userMap = new HashMap<>();
+            while (rs.next()) {
+                /*Создаем юзера из строки*/
+                Long id = rs.getLong(userColumn.getId());
+                String email = rs.getString(userColumn.getEmail());
+                String login = rs.getString(userColumn.getLogin());
+                String name = rs.getString(userColumn.getName());
+                LocalDate birthday = LocalDate.parse(rs.getString(userColumn.getBirthday()));
+                User user = User.builder()
+                        .email(email)
+                        .login(login)
+                        .name(name)
+                        .birthday(birthday)
+                        .id(id)
+                        .build();
+                /*Создаем друга*/
+
+                Long friendIdFromResultSet = rs.getLong(friendColumn.getId());
+                User friend = null;
+                if (friendIdFromResultSet != 0L) {
+                    String friendEmail = rs.getString(friendColumn.getEmail());
+                    String friendLogin = rs.getString(friendColumn.getLogin());
+                    String friendName = rs.getString(friendColumn.getName());
+                    LocalDate friendBirthday = LocalDate.parse(
+                            rs.getString(friendColumn.getBirthday()));
+                    friend = User.builder()
+                            .email(friendEmail)
+                            .login(friendLogin)
+                            .name(friendName)
+                            .birthday(friendBirthday)
+                            .id(friendIdFromResultSet)
+                            .build();
+                }
+
+
+                /*проверяем, если в мапе нет пользователя с id, то добавляем его в неё
+                 * Но сначала добавляем друга в пользователя*/
+                if (!userMap.containsKey(user.getId())) {
+                    if (friend != null) {
+                        user.addFriend(friend);
+                    }
+                    userMap.put(user.getId(), user);
+                    /*иначе извлекаем юзера из мапы, добавляем друга и кладем обратно*/
+                } else {
+                    User userFromMap = userMap.get(user.getId());
+                    if (friend != null) {
+                        userFromMap.addFriend(friend);
+                        userMap.put(userFromMap.getId(), userFromMap);
+                    }
+                }
+            }
+            return List.copyOf(userMap.values());
+        }, userId, friendId);
+        return usersFriends;
     }
 
     @Override
     public List<User> getUserFriends(Long userId) {
-        return null;
+        UserAsTable userColumn = cnGetter.getUserColumns();
+        FriendAsTable friendColumn = cnGetter.getFriendColumns();
+        throwIfUserNotExistInDb(userId);
+        String sql = sqlProvider.findUserFriendsByUserIdSql();
+        List<User> usersFriends = jdbcTemplate.query(sql, rs -> {
+            Map<Long, User> userMap = new HashMap<>();
+            while (rs.next()) {
+                /*Создаем юзера из строки*/
+                Long id = rs.getLong(userColumn.getId());
+                String email = rs.getString(userColumn.getEmail());
+                String login = rs.getString(userColumn.getLogin());
+                String name = rs.getString(userColumn.getName());
+                LocalDate birthday = LocalDate.parse(rs.getString(userColumn.getBirthday()));
+                User user = User.builder()
+                        .email(email)
+                        .login(login)
+                        .name(name)
+                        .birthday(birthday)
+                        .id(id)
+                        .build();
+                /*Создаем друга*/
+
+                Long friendId = rs.getLong(friendColumn.getId());
+                User friend = null;
+                if (friendId != 0L) {
+                    String friendEmail = rs.getString(friendColumn.getEmail());
+                    String friendLogin = rs.getString(friendColumn.getLogin());
+                    String friendName = rs.getString(friendColumn.getName());
+                    LocalDate friendBirthday = LocalDate.parse(
+                            rs.getString(friendColumn.getBirthday()));
+                    friend = User.builder()
+                            .email(friendEmail)
+                            .login(friendLogin)
+                            .name(friendName)
+                            .birthday(friendBirthday)
+                            .id(friendId)
+                            .build();
+                }
+
+
+                /*проверяем, если в мапе нет пользователя с id, то добавляем его в неё
+                 * Но сначала добавляем друга в пользователя*/
+                if (!userMap.containsKey(user.getId())) {
+                    if (friend != null) {
+                        user.addFriend(friend);
+                    }
+                    userMap.put(user.getId(), user);
+                    /*иначе извлекаем юзера из мапы, добавляем друга и кладем обратно*/
+                } else {
+                    User userFromMap = userMap.get(user.getId());
+                    if (friend != null) {
+                        userFromMap.addFriend(friend);
+                        userMap.put(userFromMap.getId(), userFromMap);
+                    }
+                }
+            }
+            return List.copyOf(userMap.values());
+        }, userId);
+        return usersFriends;
     }
 
     @Override
@@ -142,6 +275,7 @@ public class UserDbStorage implements UserStorage {
         String name = resultSet.getString(friendColumn.getName());
         LocalDate birthday = LocalDate.parse(resultSet.getString(friendColumn.getBirthday()));
         friend = User.builder()
+                .id(friendId)
                 .email(email)
                 .login(login)
                 .name(name)
@@ -149,7 +283,6 @@ public class UserDbStorage implements UserStorage {
                 .build();
         return friend;
     }
-
 
     private void throwIfUserNotExistInDb(Long userId) {
         String sql = sqlProvider.isUserExistInDbSql();
