@@ -58,16 +58,6 @@ public class FilmDbStorage implements FilmStorage {
         return findFilmById(filmId);
     }
 
-    private void addGenreToFilm(Long filmId, Integer genreId) {
-        String sql = sqlProvider.addGenreToFilmSql();
-        jdbcTemplate.update(sql, filmId, genreId);
-    }
-
-    private void deleteAllGenresFromFilm(Long filmId) {
-        String sql = sqlProvider.deleteAllGenresFromFilm();
-        jdbcTemplate.update(sql, filmId);
-    }
-
     @Transactional
     @Override
     public Film update(Film film) {
@@ -201,6 +191,16 @@ public class FilmDbStorage implements FilmStorage {
             return f;
         }, filmId);
         return film;
+    }
+
+    private void addGenreToFilm(Long filmId, Integer genreId) {
+        String sql = sqlProvider.addGenreToFilmSql();
+        jdbcTemplate.update(sql, filmId, genreId);
+    }
+
+    private void deleteAllGenresFromFilm(Long filmId) {
+        String sql = sqlProvider.deleteAllGenresFromFilm();
+        jdbcTemplate.update(sql, filmId);
     }
 
     private void throwIfFilmNotExistInDb(Long filmId) {

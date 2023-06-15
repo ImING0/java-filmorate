@@ -37,33 +37,11 @@ public class UserDbStorage implements UserStorage {
         return saveUserInDbInternal(user);
     }
 
-    private User saveUserInDbInternal(User user) {
-        String sql = sqlProvider.insertUserInDbSql();
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(con -> {
-            PreparedStatement preparedStatement = con.prepareStatement(sql, new String[]{"id"});
-            preparedStatement.setString(1, user.getEmail());
-            preparedStatement.setString(2, user.getLogin());
-            preparedStatement.setString(3, user.getName());
-            preparedStatement.setObject(4, user.getBirthday());
-            return preparedStatement;
-        }, keyHolder);
-        Long userId = (Long) keyHolder.getKey();
-        user.setId(userId);
-        return user;
-    }
-
     @Override
     public User update(User user) {
         throwIfUserNotExistInDb(user.getId());
         updateUserInDbInternal(user);
         return findUserById(user.getId());
-    }
-
-    private void updateUserInDbInternal(User user) {
-        /*Метод принимает объект класса User, и обновляет все его поля в базе данных.*/
-        jdbcTemplate.update(sqlProvider.updateUserInDbSql(), user.getEmail(), user.getLogin(),
-                user.getName(), user.getBirthday(), user.getId());
     }
 
     @Override
@@ -246,6 +224,28 @@ public class UserDbStorage implements UserStorage {
             return userResult;
         }, userId);
         return user;
+    }
+
+    private User saveUserInDbInternal(User user) {
+        String sql = sqlProvider.insertUserInDbSql();
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(con -> {
+            PreparedStatement preparedStatement = con.prepareStatement(sql, new String[]{"id"});
+            preparedStatement.setString(1, user.getEmail());
+            preparedStatement.setString(2, user.getLogin());
+            preparedStatement.setString(3, user.getName());
+            preparedStatement.setObject(4, user.getBirthday());
+            return preparedStatement;
+        }, keyHolder);
+        Long userId = (Long) keyHolder.getKey();
+        user.setId(userId);
+        return user;
+    }
+
+    private void updateUserInDbInternal(User user) {
+        /*Метод принимает объект класса User, и обновляет все его поля в базе данных.*/
+        jdbcTemplate.update(sqlProvider.updateUserInDbSql(), user.getEmail(), user.getLogin(),
+                user.getName(), user.getBirthday(), user.getId());
     }
 
     private User getUserFromSqlResultSet(ResultSet resultSet, UserAsTable userColumn,
