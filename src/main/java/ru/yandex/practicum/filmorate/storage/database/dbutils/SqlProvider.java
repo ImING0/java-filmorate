@@ -114,4 +114,38 @@ public class SqlProvider {
                 + "         LEFT JOIN USERS uf ON uf.id = fs.friend_id "
                 + "WHERE u.id IN (SELECT f_id FROM common_friend_ids)";
     }
+
+
+    public String insertFilmInDbSql() {
+        return "INSERT INTO FILMS (NAME, DESCRIPTION, RELEASE_DATE, DURATION, RATING_ID)\n"
+                + "VALUES (?, ?, ?, ?, ?);";
+    }
+
+    public String addLikeToFilmSql() {
+        return "INSERT INTO FILMS_USER_LIKE (FILM_ID, USER_ID) "
+                + "VALUES (?, ?);";
+    }
+
+
+    public String findFilmInDbByIdSql () {
+        return "SELECT f.ID AS film_id, "
+                + "       f.NAME AS film_name, "
+                + "       f.DESCRIPTION AS film_description, "
+                + "       f.RELEASE_DATE AS film_release_date, "
+                + "       f.DURATION AS film_duration, "
+                + "       r.ID AS rating_id, "
+                + "       r.NAME AS rating_name, "
+                + "       g.ID AS genre_id, "
+                + "       g.NAME AS genre_name "
+                + "       u.ID AS u_id "
+                + "FROM FILMS as f "
+                + "--Добавляем рейтинг "
+                + "         LEFT JOIN RATINGS r ON f.RATING_ID = r.ID "
+                + "-- Добавляем таблицу фильмы-жанры для получения информации о жанре "
+                + "         LEFT JOIN FILMS_GENRE fg on f.ID = fg.FILM_ID "
+                + "         LEFT JOIN GENRES g on g.ID = fg.FILM_ID "
+                + "LEFT JOIN FILMS_USER_LIKE ful on f.ID = ful.FILM_ID "
+                + "LEFT JOIN USERS u on ful.USER_ID = u.ID "
+                + "WHERE f.ID = ?;";
+    }
 }

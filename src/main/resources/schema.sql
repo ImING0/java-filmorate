@@ -26,7 +26,7 @@ create table FILMS
         primary key,
     NAME         CHARACTER VARYING(63)  not null,
     DESCRIPTION  CHARACTER VARYING(255) not null,
-    RELEASE_DATE TIMESTAMP              not null,
+    RELEASE_DATE DATE              not null,
     DURATION     BIGINT                 not null,
     RATING_ID    BIGINT,
     constraint "films_ratings_id_fk"
