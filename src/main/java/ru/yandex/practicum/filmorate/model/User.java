@@ -3,10 +3,8 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
-import org.springframework.data.relational.core.mapping.Table;
 import ru.yandex.practicum.filmorate.validation.LoginCorrect;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Past;

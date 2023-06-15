@@ -2,8 +2,10 @@ package ru.yandex.practicum.filmorate.storage.database.dbutils;
 
 import org.springframework.stereotype.Component;
 
+
 @Component
-@SuppressWarnings(value = "style")
+@SuppressWarnings(value = "all")
+
 public class SqlProvider {
 
     public String insertUserInDbSql() {
@@ -233,4 +235,5 @@ public class SqlProvider {
                 + "GROUP BY FILMS.ID "
                 + "ORDER BY l.FILM_ID DESC " + "LIMIT ?";
     }
+
 }

@@ -33,5 +33,4 @@ public class RatingController {
         Rating rating = ratingDbStorage.getRatingById(id);
         return ResponseEntity.ok(rating);
     }
-
 }

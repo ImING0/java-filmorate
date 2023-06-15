@@ -24,7 +24,7 @@ public class FilmValidationTest {
     public void testFilmValidation() {
         Film film = Film.builder()
                 .name("")
-                .description("A".repeat(201))
+                .description("A" .repeat(201))
                 .releaseDate(LocalDate.of(1800, Month.JANUARY, 1))
                 .duration(-10L)
                 .build();

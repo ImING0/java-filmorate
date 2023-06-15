@@ -32,5 +32,4 @@ public class GenreController {
         log.info("Received request to getGenreById");
         return ResponseEntity.ok(genreService.getById(id));
     }
-
 }

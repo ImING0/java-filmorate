@@ -36,12 +36,13 @@ public class FilmDbStorage implements FilmStorage {
         String sql = sqlProvider.insertFilmInDbSql();
         Long filmId;
         jdbcTemplate.update(con -> {
-            PreparedStatement preparedStatement = con.prepareStatement(sql,  new String[]{"id"});
+            PreparedStatement preparedStatement = con.prepareStatement(sql, new String[]{"id"});
             preparedStatement.setString(1, film.getName());
             preparedStatement.setString(2, film.getDescription());
             preparedStatement.setDate(3, Date.valueOf(film.getReleaseDate()));
             preparedStatement.setLong(4, film.getDuration());
-            preparedStatement.setInt(5, film.getMpa().getId());
+            preparedStatement.setInt(5, film.getMpa()
+                    .getId());
             return preparedStatement;
         }, keyHolder);
         filmId = (Long) keyHolder.getKey();
@@ -49,17 +50,19 @@ public class FilmDbStorage implements FilmStorage {
         /*Если есть жанры, то добавляем жанры фильму*/
         if (!film.getGenres()
                 .isEmpty()) {
-            film.getGenres().forEach(genre -> {
-                addGenreToFilm(filmId, genre.getId());
-            });
+            film.getGenres()
+                    .forEach(genre -> {
+                        addGenreToFilm(filmId, genre.getId());
+                    });
         }
         return findFilmById(filmId);
     }
 
-    private void addGenreToFilm(Long filmId, Integer genreId)  {
+    private void addGenreToFilm(Long filmId, Integer genreId) {
         String sql = sqlProvider.addGenreToFilmSql();
         jdbcTemplate.update(sql, filmId, genreId);
     }
+
     private void deleteAllGenresFromFilm(Long filmId) {
         String sql = sqlProvider.deleteAllGenresFromFilm();
         jdbcTemplate.update(sql, filmId);
@@ -72,13 +75,8 @@ public class FilmDbStorage implements FilmStorage {
         String sql = sqlProvider.updateFilmInDb();
         Integer mpaId = film.getMpa()
                 .getId();
-        jdbcTemplate.update(sql,
-                film.getName(),
-                film.getDescription(),
-                film.getReleaseDate(),
-                film.getDuration(),
-                mpaId,
-                film.getId());
+        jdbcTemplate.update(sql, film.getName(), film.getDescription(), film.getReleaseDate(),
+                film.getDuration(), mpaId, film.getId());
 
         /*Если есть жанры, то добавляем жанры фильму*/
         if (!film.getGenres()
@@ -99,8 +97,6 @@ public class FilmDbStorage implements FilmStorage {
 
         return findFilmById(film.getId());
     }
-
-
 
     @Override
     public List<Film> findAll() {
@@ -145,7 +141,6 @@ public class FilmDbStorage implements FilmStorage {
         }
         return films;
     }
-
 
     @Override
     public Film findFilmById(Long filmId) {
@@ -211,8 +206,8 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void throwIfFilmNotExistInDb(Long filmId) {
-        Integer answer = jdbcTemplate.queryForObject(sqlProvider.isFilmExistInDb(), Integer.class
-                , filmId);
+        Integer answer = jdbcTemplate.queryForObject(sqlProvider.isFilmExistInDb(), Integer.class,
+                filmId);
         if (answer == 0) {
             throw new ResourceNotFoundException(
                     String.format("Фильм с таким [ID] - %d не найден.", filmId));
