@@ -136,6 +136,11 @@ public class SqlProvider {
                 + "VALUES (?, ?);";
     }
 
+    public String deleteSingleLikeFromFilm () {
+        return "DELETE FROM FILMS_USER_LIKE "
+                + "WHERE FILM_ID = ? AND USER_ID = ?";
+    }
+
 
     public String findFilmInDbByIdSql () {
         return " SELECT f.ID AS film_id, "
@@ -159,13 +164,19 @@ public class SqlProvider {
 
     public String findAllFilmsInDbSql() {
         return "SELECT film.ID AS f_id "
-                + "FROM FILMS as film;";
+                + "FROM FILMS as film "
+                + "ORDER BY f_id ASC;";
     }
 
     /*Добавить жанр фильму*/
     public String addGenreToFilmSql() {
         return " INSERT INTO FILMS_GENRE (FILM_ID, GENRE_ID) "
                 + "VALUES (?, ?) ";
+    }
+
+    public String deleteAllGenresFromFilm() {
+        return "DELETE FROM FILMS_GENRE "
+                + "WHERE FILM_ID = ?";
     }
 
     /*Проверяет есть ли фильм в БД*/
@@ -187,6 +198,24 @@ public class SqlProvider {
                 + "       r.NAME AS rating_name "
                 + "FROM RATINGS AS r "
                 + "ORDER BY ID ASC;";
+    }
+
+    public String getGenreByIdSql() {
+        return "SELECT GENRES.ID AS genre_id, "
+                + "       GENRES.NAME AS genre_name "
+                + "FROM GENRES "
+                + "WHERE GENRES.ID = ?";
+    }
+
+    public String getAllGenresSql() {
+        return "SELECT GENRES.ID AS genre_id, "
+                + "FROM GENRES ";
+    }
+
+    public String isGenreExist() {
+        return " SELECT COUNT(*) "
+                + "FROM GENRES "
+                + "WHERE ID = ?;";
     }
 
     /*Проверяем есть ли такой рейтинг*/

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 @Getter
@@ -11,15 +12,16 @@ public enum GenreName {
     DOCUMENTARY("Документальный"),
     ACTION("Боевик");
 
-    private final String description;
+    @JsonValue
+    private final String genre;
 
-    GenreName(String description) {
-        this.description = description;
+    GenreName(String genre) {
+        this.genre = genre;
     }
 
     public static GenreName fromString(String name) {
         for (GenreName genre : GenreName.values()) {
-            if (genre.getDescription().equalsIgnoreCase(name)) {
+            if (genre.getGenre().equalsIgnoreCase(name)) {
                 return genre;
             }
         }
@@ -28,6 +30,6 @@ public enum GenreName {
 
     @Override
     public String toString() {
-        return description;
+        return genre;
     }
 }

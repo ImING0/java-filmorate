@@ -60,6 +60,10 @@ public class FilmDbStorage implements FilmStorage {
         String sql = sqlProvider.addGenreToFilmSql();
         jdbcTemplate.update(sql, filmId, genreId);
     }
+    private void deleteAllGenresFromFilm(Long filmId) {
+        String sql = sqlProvider.deleteAllGenresFromFilm();
+        jdbcTemplate.update(sql, filmId);
+    }
 
     @Transactional
     @Override
@@ -75,8 +79,28 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDuration(),
                 mpaId,
                 film.getId());
+
+        /*Если есть жанры, то добавляем жанры фильму*/
+        if (!film.getGenres()
+                .isEmpty()) {
+            /*теперь нужно удалить все жанры и снова их вставить*/
+            deleteAllGenresFromFilm(film.getId());
+            
+            film.getGenres()
+                    .stream()
+                    .map(Genre::getId) // Оставляем только id жанров
+                    .distinct() // Оставляем только уникальные id жанров
+                    .forEach(genreId -> addGenreToFilm(film.getId(), genreId));
+        } else {
+            /*Если пусто, значиит надо усе удалить*/
+            deleteAllGenresFromFilm(film.getId());
+        }
+
+
         return findFilmById(film.getId());
     }
+
+
 
     @Override
     public List<Film> findAll() {
@@ -96,11 +120,15 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public void addLikeToFilm(Long filmId, Long userId) {
         throwIfFilmNotExistInDb(filmId);
+        String sql = sqlProvider.addLikeToFilmSql();
+        jdbcTemplate.update(sql, filmId, userId);
     }
 
     @Override
     public void removeLikeFromFilm(Long filmId, Long userId) {
-
+        throwIfFilmNotExistInDb(filmId);
+        String sql = sqlProvider.deleteSingleLikeFromFilm();
+        jdbcTemplate.update(sql, filmId, userId);
     }
 
     @Override
