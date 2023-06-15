@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 @Getter
@@ -10,15 +11,16 @@ public enum RatingName {
     R("R"),
     NC_17("NC-17");
 
-    private final String name;
+    @JsonValue
+    private final String rating;
 
-    RatingName(String name) {
-        this.name = name;
+    RatingName(String rating) {
+        this.rating = rating;
     }
 
     public static RatingName fromString(String name) {
         for (RatingName rating : RatingName.values()) {
-            if (rating.name.equalsIgnoreCase(name)) {
+            if (rating.rating.equalsIgnoreCase(name)) {
                 return rating;
             }
         }
@@ -27,6 +29,6 @@ public enum RatingName {
 
     @Override
     public String toString() {
-        return name;
+        return rating;
     }
 }

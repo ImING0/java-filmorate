@@ -121,6 +121,16 @@ public class SqlProvider {
                 + "VALUES (?, ?, ?, ?, ?);";
     }
 
+    public String updateFilmInDb() {
+        return "UPDATE FILMS "
+                + " SET NAME         = ?, "
+                + "    DESCRIPTION  = ?, "
+                + "    RELEASE_DATE = ?, "
+                + "    DURATION     = ?, "
+                + "    RATING_ID    = ? "
+                + "WHERE ID = ?;";
+    }
+
     public String addLikeToFilmSql() {
         return "INSERT INTO FILMS_USER_LIKE (FILM_ID, USER_ID) "
                 + "VALUES (?, ?);";
@@ -128,7 +138,7 @@ public class SqlProvider {
 
 
     public String findFilmInDbByIdSql () {
-        return "SELECT f.ID AS film_id, "
+        return " SELECT f.ID AS film_id, "
                 + "       f.NAME AS film_name, "
                 + "       f.DESCRIPTION AS film_description, "
                 + "       f.RELEASE_DATE AS film_release_date, "
@@ -136,16 +146,62 @@ public class SqlProvider {
                 + "       r.ID AS rating_id, "
                 + "       r.NAME AS rating_name, "
                 + "       g.ID AS genre_id, "
-                + "       g.NAME AS genre_name "
+                + "       g.NAME AS genre_name, "
                 + "       u.ID AS u_id "
-                + "FROM FILMS as f "
-                + "--Добавляем рейтинг "
+                + " FROM FILMS as f "
                 + "         LEFT JOIN RATINGS r ON f.RATING_ID = r.ID "
-                + "-- Добавляем таблицу фильмы-жанры для получения информации о жанре "
                 + "         LEFT JOIN FILMS_GENRE fg on f.ID = fg.FILM_ID "
-                + "         LEFT JOIN GENRES g on g.ID = fg.FILM_ID "
+                + "         LEFT JOIN GENRES g on g.ID = fg.GENRE_ID "
                 + "         LEFT JOIN FILMS_USER_LIKE ful on f.ID = ful.FILM_ID "
                 + "         LEFT JOIN USERS u on ful.USER_ID = u.ID "
                 + "WHERE f.ID = ?;";
+    }
+
+    public String findAllFilmsInDbSql() {
+        return "SELECT film.ID AS f_id "
+                + "FROM FILMS as film;";
+    }
+
+    /*Добавить жанр фильму*/
+    public String addGenreToFilmSql() {
+        return " INSERT INTO FILMS_GENRE (FILM_ID, GENRE_ID) "
+                + "VALUES (?, ?) ";
+    }
+
+    /*Проверяет есть ли фильм в БД*/
+    public String isFilmExistInDb() {
+        return " SELECT COUNT(*) "
+                + "FROM FILMS as film "
+                + "WHERE film.ID = ?;";
+    }
+
+    public String getRatingByIdSql() {
+        return " SELECT r.ID AS rating_id, "
+                + "       r.NAME AS rating_name "
+                + "FROM RATINGS AS r "
+                + "WHERE r.ID = ?;";
+    }
+
+    public String getAllRatings() {
+        return " SELECT r.ID   AS rating_id, "
+                + "       r.NAME AS rating_name "
+                + "FROM RATINGS AS r "
+                + "ORDER BY ID ASC;";
+    }
+
+    /*Проверяем есть ли такой рейтинг*/
+    public String isRatingExist () {
+        return " SELECT COUNT(*) "
+                + "FROM RATINGS "
+                + "WHERE ID = ?;";
+    }
+
+    /*Получить id самых популярных фильмов.*/
+    public String getMostPopularFilmIds() {
+        return "SELECT FILMS.ID "
+                + "FROM FILMS "
+                + "         LEFT JOIN FILMS_USER_LIKE AS l ON FILMS.ID = l.FILM_ID "
+                + "GROUP BY FILMS.ID "
+                + "ORDER BY l.FILM_ID DESC " + "LIMIT ?";
     }
 }
