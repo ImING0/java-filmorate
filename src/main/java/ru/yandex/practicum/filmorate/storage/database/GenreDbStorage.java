@@ -35,7 +35,6 @@ public class GenreDbStorage {
         return genres;
     }
 
-
     public Genre getById(Integer id) {
         throwIfGenreNotExistInDb(id);
         GenreAsTable genreAsTable = cnGetter.getGenreColumn();
@@ -46,7 +45,9 @@ public class GenreDbStorage {
                 Integer genreIdRs = rs.getInt(genreAsTable.getId());
                 String genreNameRs = rs.getString(genreAsTable.getName());
                 GenreName genreName = GenreName.fromString(genreNameRs);
-                genreResult = Genre.builder().id(genreIdRs).name(genreName)
+                genreResult = Genre.builder()
+                        .id(genreIdRs)
+                        .name(genreName)
                         .build();
             }
             return genreResult;
@@ -55,8 +56,8 @@ public class GenreDbStorage {
     }
 
     private void throwIfGenreNotExistInDb(Integer genreId) {
-        Integer answer = jdbcTemplate.queryForObject(sqlProvider.isGenreExist(), Integer.class
-                , genreId);
+        Integer answer = jdbcTemplate.queryForObject(sqlProvider.isGenreExist(), Integer.class,
+                genreId);
         if (answer == 0) {
             throw new ResourceNotFoundException(
                     String.format("Жанр с таким [ID] - %d не найден.", genreId));

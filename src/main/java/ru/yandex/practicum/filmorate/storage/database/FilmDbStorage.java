@@ -83,7 +83,7 @@ public class FilmDbStorage implements FilmStorage {
                 .isEmpty()) {
             /*теперь нужно удалить все жанры и снова их вставить*/
             deleteAllGenresFromFilm(film.getId());
-            
+
             film.getGenres()
                     .stream()
                     .map(Genre::getId) // Оставляем только id жанров
@@ -148,9 +148,7 @@ public class FilmDbStorage implements FilmStorage {
         GenreAsTable genreColumns = cnGetter.getGenreColumn();
         RatingAsTable ratingAsTable = cnGetter.getRatingAsTable();
         FilmAsTable filmAsTable = cnGetter.getFilmColumns();
-        System.out.println("1");
         String sql = sqlProvider.findFilmInDbByIdSql();
-        System.out.println("2");
         Film film = jdbcTemplate.query(sql, rs -> {
             /*Сюда будем сохранять все жанры фильма*/
             List<Genre> genres = new ArrayList<>();

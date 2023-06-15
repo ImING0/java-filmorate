@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class FilmRowMapper implements RowMapper<Film> {
@@ -18,7 +17,8 @@ public class FilmRowMapper implements RowMapper<Film> {
                 .id(rs.getLong("film_id"))
                 .name(rs.getString("film_name"))
                 .description(rs.getString("film_description"))
-                .releaseDate(rs.getDate("film_release_date").toLocalDate())
+                .releaseDate(rs.getDate("film_release_date")
+                        .toLocalDate())
                 .duration(rs.getLong("film_duration"));
 
         // Mapping rating

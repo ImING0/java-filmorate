@@ -21,7 +21,8 @@ public enum GenreName {
 
     public static GenreName fromString(String name) {
         for (GenreName genre : GenreName.values()) {
-            if (genre.getGenre().equalsIgnoreCase(name)) {
+            if (genre.getGenre()
+                    .equalsIgnoreCase(name)) {
                 return genre;
             }
         }
