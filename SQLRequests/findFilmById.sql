@@ -34,4 +34,4 @@ FROM FILMS as f
          LEFT JOIN GENRES g on g.ID = fg.FILM_ID
          LEFT JOIN FILMS_USER_LIKE ful on f.ID = ful.FILM_ID
          LEFT JOIN USERS u on ful.USER_ID = u.ID
-WHERE f.ID = 1;
+WHERE f.ID = ?;

@@ -144,8 +144,8 @@ public class SqlProvider {
                 + "-- Добавляем таблицу фильмы-жанры для получения информации о жанре "
                 + "         LEFT JOIN FILMS_GENRE fg on f.ID = fg.FILM_ID "
                 + "         LEFT JOIN GENRES g on g.ID = fg.FILM_ID "
-                + "LEFT JOIN FILMS_USER_LIKE ful on f.ID = ful.FILM_ID "
-                + "LEFT JOIN USERS u on ful.USER_ID = u.ID "
+                + "         LEFT JOIN FILMS_USER_LIKE ful on f.ID = ful.FILM_ID "
+                + "         LEFT JOIN USERS u on ful.USER_ID = u.ID "
                 + "WHERE f.ID = ?;";
     }
 }

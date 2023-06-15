@@ -10,7 +10,9 @@ import ru.yandex.practicum.filmorate.storage.database.dbutils.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -61,8 +63,11 @@ public class FilmDbStorage implements FilmStorage {
             /*Сюда будем сохранять все жанры фильма*/
             List<Genre> genres = new ArrayList<>();
             Rating rating = null;
+            Set<Long> userlikes = new HashSet<>();
             Film f = null;
             while (rs.next()) {
+                Long userLikeId = rs.getLong("u_id");
+                userlikes.add(userLikeId);
                 int genreIdRs = rs.getInt(genreColumns.getId());
                 String genreNameRs = rs.getString(genreColumns.getName());
                 if (genreIdRs != 0) {
@@ -75,7 +80,7 @@ public class FilmDbStorage implements FilmStorage {
                 if (rating == null) {
                     int rating_id = rs.getInt(ratingAsTable.getId());
                     String ratingNameRs = rs.getString(ratingAsTable.getName());
-                    if (rating_id != o) {
+                    if (rating_id != 0) {
                         RatingName ratingName = RatingName.fromString(ratingNameRs);
                         rating = Rating.builder()
                                 .id(rating_id)
@@ -95,9 +100,15 @@ public class FilmDbStorage implements FilmStorage {
                             .id(id)
                             .name(filmNameRs)
                             .description(filmDescrRs)
-                            .releaseDate(filmReleaseDate).
+                            .releaseDate(filmReleaseDate).build();
                 }
-            } return User;
-        }, filmId); return null;
+
+            }
+            f.setMpa(rating);
+            f.setGenres(genres);
+            f.setLikes(userlikes);
+            return f;
+        }, filmId);
+        return user;
     }
 }
