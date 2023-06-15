@@ -168,12 +168,12 @@ public class FilmDbStorage implements FilmStorage {
                             .build());
                 }
                 if (rating == null) {
-                    int rating_id = rs.getInt(ratingAsTable.getId());
+                    int ratingIdRs = rs.getInt(ratingAsTable.getId());
                     String ratingNameRs = rs.getString(ratingAsTable.getName());
-                    if (rating_id != 0) {
+                    if (ratingIdRs != 0) {
                         RatingName ratingName = RatingName.fromString(ratingNameRs);
                         rating = Rating.builder()
-                                .id(rating_id)
+                                .id(ratingIdRs)
                                 .name(ratingName)
                                 .build();
                     }
