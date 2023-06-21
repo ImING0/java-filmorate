@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exeption.ResourceIsAlreadyExistException;
-import ru.yandex.practicum.filmorate.exeption.ResourceNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserServiceInterface;
 
@@ -37,13 +36,8 @@ public class UserController {
     @PutMapping
     public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
         log.info("Получен запрос на обновления пользователя{}", user);
-        try {
-            User userUpdated = userServiceInterface.updateUser(user);
-            return new ResponseEntity<>(userUpdated, HttpStatus.OK);
-        } catch (ResourceNotFoundException e) {
-            log.info(e.getMessage());
-        }
-        return new ResponseEntity<>(user, HttpStatus.INTERNAL_SERVER_ERROR);
+        User userUpdated = userServiceInterface.updateUser(user);
+        return new ResponseEntity<>(userUpdated, HttpStatus.OK);
     }
 
     @GetMapping

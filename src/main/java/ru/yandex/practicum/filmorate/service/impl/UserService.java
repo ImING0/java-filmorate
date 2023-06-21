@@ -1,21 +1,20 @@
 package ru.yandex.practicum.filmorate.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserServiceInterface;
-import ru.yandex.practicum.filmorate.storage.inmemory.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserServiceInterface {
 
-    private final InMemoryUserStorage userStorage;
+    @Qualifier("userDbStorage")
+    private final UserStorage userStorage;
 
     @Override
     public User createUser(User user) {
@@ -34,49 +33,22 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public void addFriend(Long userId, Long newFriendId) {
-        User user = userStorage.findUserOrThrow(userId);
-        User friend = userStorage.findFriendOrThrow(newFriendId);
-        user.addFriend(friend);
+        userStorage.addFriendForUser(userId, newFriendId);
     }
 
     @Override
     public void removeFriend(Long userId, Long friendId) {
-        User user = userStorage.findUserOrThrow(userId);
-        User friend = userStorage.findFriendOrThrow(friendId);
-        user.removeFriend(friend);
+        userStorage.removeFriendForUser(userId, friendId);
     }
 
     @Override
     public List<User> getCommonFriendForUser(Long userId, Long friendId) {
-        User user = userStorage.findUserOrThrow(userId);
-        User friend = userStorage.findFriendOrThrow(friendId);
-        Set<Long> commonFriendsIds = user.findCommonFriendsWithUser(friend);
-
-        /*Собираем список общих друзей*/
-        List<User> commonFriends = new ArrayList<>();
-        Map<Long, User> userMap = userStorage.getUserMap();
-        for (Long id : commonFriendsIds) {
-            User someFriend = userMap.get(id);
-            if (someFriend != null) {
-                commonFriends.add(someFriend);
-            }
-        }
-        return commonFriends;
+        return userStorage.getCommonFriendForUser(userId, friendId);
     }
 
     @Override
     public List<User> getUserFriends(Long userId) {
-        User user = userStorage.findUserOrThrow(userId);
-        Set<Long> friendsIds = user.getFriends();
-        List<User> userFriends = new ArrayList<>();
-        friendsIds.forEach(id -> {
-            User friend = userStorage.getUserMap()
-                    .get(id);
-            if (friend != null) {
-                userFriends.add(friend);
-            }
-        });
-        return userFriends;
+        return userStorage.getUserFriends(userId);
     }
 
     @Override

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 import ru.yandex.practicum.filmorate.validation.LoginCorrect;
 
+import javax.persistence.Id;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
@@ -14,9 +15,9 @@ import java.util.Set;
 @Data
 @Builder
 @Jacksonized
-
 public class User {
 
+    @Id
     private Long id;
     @Email
     private String email;
@@ -30,14 +31,10 @@ public class User {
 
     public void addFriend(User user) {
         friends.add(user.getId());
-        user.getFriends()
-                .add(this.id);
     }
 
     public void removeFriend(User user) {
         friends.remove(user.getId());
-        user.getFriends()
-                .remove(this.id);
     }
 
     public Set<Long> findCommonFriendsWithUser(User user) {

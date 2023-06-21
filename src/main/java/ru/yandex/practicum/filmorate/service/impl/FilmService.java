@@ -1,22 +1,20 @@
 package ru.yandex.practicum.filmorate.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exeption.ResourceNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmServiceInterface;
-import ru.yandex.practicum.filmorate.storage.inmemory.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class FilmService implements FilmServiceInterface {
 
-    private final InMemoryFilmStorage filmStorage;
+    @Qualifier("filmDbStorage")
+    private final FilmStorage filmStorage;
 
     @Override
     public Film createFilm(Film film) {
@@ -35,31 +33,17 @@ public class FilmService implements FilmServiceInterface {
 
     @Override
     public void addLikeToFilm(Long filmId, Long userId) {
-        Map<Long, Film> filmMap = filmStorage.getFilmMap();
-        if (!filmMap.containsKey(filmId))
-            throw new ResourceNotFoundException("Фильм с id [%d] не найден");
-        filmMap.get(filmId)
-                .addLikeToFilm(userId);
+        filmStorage.addLikeToFilm(filmId, userId);
     }
 
     @Override
     public void removeLikeFromFilm(Long filmId, Long userId) {
-        Map<Long, Film> filmMap = filmStorage.getFilmMap();
-        if (!filmMap.containsKey(filmId))
-            throw new ResourceNotFoundException("Фильм с id [%d] не найден");
-        filmMap.get(filmId)
-                .removeLikeFromFilm(userId);
+        filmStorage.removeLikeFromFilm(filmId, userId);
     }
 
     @Override
     public List<Film> getMostPopularFilms(Long count) {
-        Map<Long, Film> filmMap = filmStorage.getFilmMap();
-        return filmMap.values()
-                .stream()
-                .sorted(Comparator.comparingInt(film -> -film.getLikes()
-                        .size()))
-                .limit(count)
-                .collect(Collectors.toList());
+        return filmStorage.getMostPopularFilms(count);
     }
 
     @Override
